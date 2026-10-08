@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 import type { Action, GameConfig, Position } from './api/types';
+import { AppFooter } from './components/AppFooter/AppFooter';
 import { Banner } from './components/Banner/Banner';
 import { Button } from './components/Button/Button';
 import { LoadingIndicator } from './components/LoadingIndicator/LoadingIndicator';
@@ -55,162 +56,165 @@ export function App() {
   );
 
   return (
-    <div className={styles.app}>
-      <header className={styles.header}>
-        <div className={styles.brand}>
-          <span className={styles.logo}>
-            <Sprite name="wumpus" />
-          </span>
-          <div>
-            <h1 className={styles.title}>Mundo de Wumpus</h1>
-            <p className={styles.tagline}>Agente lógico com a base de conhecimento à vista</p>
-          </div>
-        </div>
-        <div className={styles.headerActions}>
-          {view && pendingStatus}
-          {view && (
-            <>
-              <span className={styles.configChip}>{describeConfig(view.config)}</span>
-              <Button
-                onClick={() => {
-                  setDialogOpen(true);
-                }}
-              >
-                Novo jogo
-              </Button>
-            </>
-          )}
-        </div>
-      </header>
-
-      {game.notice && (
-        <Banner
-          tone="info"
-          actions={
-            <Button size="sm" variant="ghost" onClick={game.dismissNotice}>
-              Fechar
-            </Button>
-          }
-        >
-          {game.notice}
-        </Banner>
-      )}
-      {game.error && view && (
-        <Banner
-          tone="error"
-          actions={
-            <>
-              <Button size="sm" onClick={game.retry}>
-                Tentar novamente
-              </Button>
-              <Button size="sm" variant="ghost" onClick={game.dismissError}>
-                Fechar
-              </Button>
-            </>
-          }
-        >
-          {game.error}
-        </Banner>
-      )}
-
-      <main className={styles.layout}>
-        {game.phase === 'idle' ? (
-          <GameSetup
-            className={styles.setup}
-            initial={createDefaultGameConfig()}
-            onSubmit={handleNewGame}
-          />
-        ) : (
-          <section className={styles.boardColumn} aria-label="Caverna">
-            {view ? (
-              <>
-                <GameOverBanner
-                  view={view}
-                  onNewGame={() => {
-                    setDialogOpen(true);
-                  }}
-                />
-                <Board view={view} selected={selected} onSelect={setSelected} />
-                <Legend />
-              </>
-            ) : (
-              <div className={styles.placeholder}>
-                <BoardSkeleton />
-                <div className={styles.placeholderStatus}>
-                  {game.error ? (
-                    <Banner
-                      tone="error"
-                      actions={
-                        <>
-                          <Button size="sm" onClick={game.retry}>
-                            Tentar novamente
-                          </Button>
-                          <Button size="sm" variant="ghost" onClick={game.dismissError}>
-                            Mudar configurações
-                          </Button>
-                        </>
-                      }
-                    >
-                      {game.error}
-                    </Banner>
-                  ) : (
-                    pendingStatus
-                  )}
-                </div>
-              </div>
-            )}
-          </section>
-        )}
-
-        {view && (
-          <aside className={styles.sideColumn} aria-label="Controles">
-            <ScorePanel view={view} />
-            <PerceptPanel view={view} />
-            <ActionControls
-              canAct={canAct}
-              hasArrow={view.agent.hasArrow}
-              shortcutsEnabled={!dialogOpen}
-              onAction={handleAction}
-            />
-            <AgentControls
-              canAct={canAct}
-              isPlaying={autoplay.isPlaying}
-              speed={autoplay.speed}
-              decision={game.lastDecision}
-              onStep={() => {
-                void game.agentStep();
-              }}
-              onPlay={autoplay.play}
-              onPause={autoplay.pause}
-              onSpeedChange={autoplay.setSpeed}
-            />
-          </aside>
-        )}
-
-        {view && (
-          <div className={styles.knowledgeRow}>
-            <KnowledgeBasePanel view={view} actions={game.actions} />
-            <div className={styles.inferenceColumn}>
-              <InferencePanel view={view} selected={selected} />
-              <ModelsView pitModels={view.pitModels} selected={selected} />
+    <div className={styles.page}>
+      <div className={styles.app}>
+        <header className={styles.header}>
+          <div className={styles.brand}>
+            <span className={styles.logo}>
+              <Sprite name="wumpus" />
+            </span>
+            <div>
+              <h1 className={styles.title}>Mundo de Wumpus</h1>
+              <p className={styles.tagline}>Agente lógico com a base de conhecimento à vista</p>
             </div>
           </div>
+          <div className={styles.headerActions}>
+            {view && pendingStatus}
+            {view && (
+              <>
+                <span className={styles.configChip}>{describeConfig(view.config)}</span>
+                <Button
+                  onClick={() => {
+                    setDialogOpen(true);
+                  }}
+                >
+                  Novo jogo
+                </Button>
+              </>
+            )}
+          </div>
+        </header>
+
+        {game.notice && (
+          <Banner
+            tone="info"
+            actions={
+              <Button size="sm" variant="ghost" onClick={game.dismissNotice}>
+                Fechar
+              </Button>
+            }
+          >
+            {game.notice}
+          </Banner>
         )}
-      </main>
+        {game.error && view && (
+          <Banner
+            tone="error"
+            actions={
+              <>
+                <Button size="sm" onClick={game.retry}>
+                  Tentar novamente
+                </Button>
+                <Button size="sm" variant="ghost" onClick={game.dismissError}>
+                  Fechar
+                </Button>
+              </>
+            }
+          >
+            {game.error}
+          </Banner>
+        )}
 
-      <footer className={styles.footer}>
-        Fundamentos de Inteligência Artificial · baseado no capítulo 7 do AIMA (agentes lógicos)
-      </footer>
+        <main className={styles.layout}>
+          {game.phase === 'idle' ? (
+            <GameSetup
+              className={styles.setup}
+              initial={createDefaultGameConfig()}
+              onSubmit={handleNewGame}
+            />
+          ) : (
+            <section className={styles.boardColumn} aria-label="Caverna">
+              {view ? (
+                <>
+                  <GameOverBanner
+                    view={view}
+                    onNewGame={() => {
+                      setDialogOpen(true);
+                    }}
+                  />
+                  <Board view={view} selected={selected} onSelect={setSelected} />
+                  <Legend />
+                </>
+              ) : (
+                <div className={styles.placeholder}>
+                  <BoardSkeleton />
+                  <div className={styles.placeholderStatus}>
+                    {game.error ? (
+                      <Banner
+                        tone="error"
+                        actions={
+                          <>
+                            <Button size="sm" onClick={game.retry}>
+                              Tentar novamente
+                            </Button>
+                            <Button size="sm" variant="ghost" onClick={game.dismissError}>
+                              Mudar configurações
+                            </Button>
+                          </>
+                        }
+                      >
+                        {game.error}
+                      </Banner>
+                    ) : (
+                      pendingStatus
+                    )}
+                  </div>
+                </div>
+              )}
+            </section>
+          )}
 
-      {dialogOpen && (
-        <NewGameDialog
-          current={view?.config ?? createDefaultGameConfig()}
-          onSubmit={handleNewGame}
-          onCancel={() => {
-            setDialogOpen(false);
-          }}
-        />
-      )}
+          {view && (
+            <aside className={styles.sideColumn} aria-label="Controles">
+              <ScorePanel view={view} />
+              <PerceptPanel view={view} />
+              <ActionControls
+                canAct={canAct}
+                hasArrow={view.agent.hasArrow}
+                shortcutsEnabled={!dialogOpen}
+                onAction={handleAction}
+              />
+              <AgentControls
+                canAct={canAct}
+                isPlaying={autoplay.isPlaying}
+                speed={autoplay.speed}
+                decision={game.lastDecision}
+                onStep={() => {
+                  void game.agentStep();
+                }}
+                onPlay={autoplay.play}
+                onPause={autoplay.pause}
+                onSpeedChange={autoplay.setSpeed}
+              />
+            </aside>
+          )}
+
+          {view && (
+            <div className={styles.knowledgeRow}>
+              <KnowledgeBasePanel view={view} actions={game.actions} />
+              <div className={styles.inferenceColumn}>
+                <InferencePanel view={view} selected={selected} />
+                <ModelsView pitModels={view.pitModels} selected={selected} />
+              </div>
+            </div>
+          )}
+        </main>
+
+        <p className={styles.courseNote}>
+          Fundamentos de Inteligência Artificial · baseado no capítulo 7 do AIMA (agentes lógicos)
+        </p>
+
+        {dialogOpen && (
+          <NewGameDialog
+            current={view?.config ?? createDefaultGameConfig()}
+            onSubmit={handleNewGame}
+            onCancel={() => {
+              setDialogOpen(false);
+            }}
+          />
+        )}
+      </div>
+      <AppFooter />
     </div>
   );
 }
