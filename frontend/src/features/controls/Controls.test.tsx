@@ -20,6 +20,15 @@ describe('ActionControls', () => {
     expect(onAction).toHaveBeenCalledWith('forward');
   });
 
+  it('keeps the goal and the scoring in sight while playing', () => {
+    renderActions();
+
+    expect(
+      screen.getByText(hasTextContent('Como vencer: Pegue o ouro, volte para [1,1] e use Sair.')),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/\+1000 ao sair com o ouro/)).toBeInTheDocument();
+  });
+
   it('maps the keyboard shortcuts to actions', () => {
     const onAction = renderActions();
 

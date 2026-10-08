@@ -2,6 +2,7 @@ import type { Action } from '../../api/types';
 import { Button } from '../../components/Button/Button';
 import { Panel } from '../../components/Panel/Panel';
 import { Sprite } from '../../components/Sprite/Sprite';
+import { GameGoal } from '../game/GameGoal';
 import { ACTION_LABELS } from '../game/labels';
 import styles from './Controls.module.css';
 import { useActionShortcuts } from './useActionShortcuts';
@@ -63,6 +64,7 @@ export function ActionControls({
           </Button>
         ))}
       </div>
+      <GameGoal />
     </Panel>
   );
 }
