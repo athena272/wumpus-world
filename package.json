@@ -1,0 +1,34 @@
+{
+  "name": "wumpus-world",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Mundo de Wumpus com agente lógico e base de conhecimento visível (React + FastAPI).",
+  "author": "Guilherme Rosário Alves",
+  "packageManager": "pnpm@12.8.1",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "bootstrap": "pnpm install && uv --directory backend sync",
+    "dev": "pnpm run \"/^dev:/\"",
+    "dev:frontend": "pnpm --filter frontend dev",
+    "dev:backend": "uv --directory backend run uvicorn main:app --reload --port 8000",
+    "build": "pnpm --filter frontend build",
+    "test": "pnpm run test:backend && pnpm run test:frontend",
+    "test:frontend": "pnpm --filter frontend test",
+    "test:backend": "uv --directory backend run pytest",
+    "lint": "pnpm run lint:backend && pnpm run lint:frontend",
+    "lint:frontend": "pnpm --filter frontend lint",
+    "lint:backend": "uv --directory backend run ruff check .",
+    "typecheck": "pnpm run typecheck:backend && pnpm run typecheck:frontend",
+    "typecheck:frontend": "pnpm --filter frontend typecheck",
+    "typecheck:backend": "uv --directory backend run mypy",
+    "format": "pnpm run format:backend && pnpm run format:frontend",
+    "format:frontend": "pnpm --filter frontend format",
+    "format:backend": "uv --directory backend run ruff format .",
+    "format:check": "pnpm run format:check:backend && pnpm run format:check:frontend",
+    "format:check:frontend": "pnpm --filter frontend format:check",
+    "format:check:backend": "uv --directory backend run ruff format --check .",
+    "gen:api": "uv --directory backend run python scripts/export_openapi.py ../frontend/openapi.json && pnpm --filter frontend gen:api"
+  }
+}

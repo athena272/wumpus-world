@@ -1,0 +1,135 @@
+.actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.actionButton {
+  flex-direction: column;
+  gap: 0.2rem;
+  min-height: 5rem;
+  padding: 0.55rem 0.35rem;
+  border-radius: 0.9rem;
+  line-height: 1.2;
+}
+
+.actionButton:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--color-info) 60%, var(--color-border));
+  background: color-mix(in srgb, var(--color-info) 10%, var(--color-surface-raised));
+}
+
+.icon {
+  font-size: 1.45rem;
+  line-height: 1;
+  color: var(--color-info);
+}
+
+.actionLabel {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.kbd {
+  margin-top: 0.1rem;
+  padding: 0.05rem 0.4rem;
+  border: 1px solid var(--color-border);
+  border-bottom-width: 2px;
+  border-radius: 0.35rem;
+  background: var(--color-surface);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.agentRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.speed {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-left: auto;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.speed select {
+  min-height: 2.4rem;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.6rem;
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.decision {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--color-violet) 30%, transparent);
+  border-left: 4px solid var(--color-violet);
+  border-radius: 0.8rem;
+  background: color-mix(in srgb, var(--color-violet) 8%, var(--color-surface-raised));
+}
+
+.decisionAction {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.decisionLabel {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.decisionChoice {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-violet);
+}
+
+.explanation {
+  margin: 0;
+  font-size: 0.97rem;
+  line-height: 1.55;
+  color: var(--color-text-soft);
+}
+
+.plan {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.plan li {
+  padding: 0.15rem 0.6rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  color: var(--color-text-soft);
+}
+
+.plan li:first-child {
+  border-color: var(--color-violet);
+  color: var(--color-violet);
+}

@@ -1,0 +1,39 @@
+# Dependencies
+node_modules
+.venv
+
+# Build, cache and coverage output
+dist
+dist-ssr
+coverage
+*.tsbuildinfo
+__pycache__
+*.py[cod]
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.coverage
+htmlcov
+
+# Intermediate OpenAPI document (the generated schema.d.ts is committed)
+frontend/openapi.json
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Editors and OS
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+Thumbs.db
+
+# Vercel
+.vercel

@@ -1,0 +1,51 @@
+.banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  padding: 0.85rem 1.1rem;
+  border: 1px solid;
+  border-radius: 1rem;
+  animation: appear 0.35s ease-out;
+}
+
+.won {
+  border-color: var(--color-safe);
+  background: color-mix(in srgb, var(--color-safe) 14%, var(--color-surface));
+}
+
+.escaped {
+  border-color: var(--color-warning);
+  background: color-mix(in srgb, var(--color-warning) 14%, var(--color-surface));
+}
+
+.dead {
+  border-color: var(--color-danger);
+  background: color-mix(in srgb, var(--color-danger) 14%, var(--color-surface));
+}
+
+.title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.text {
+  margin: 0.15rem 0 0;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .banner {
+    animation: none;
+  }
+}

@@ -1,2 +1,9 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# Auto detect text files and normalize to LF (keeps Prettier and Ruff consistent across OSes)
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.webp binary
+*.gif binary
+*.ico binary
+*.pdf binary

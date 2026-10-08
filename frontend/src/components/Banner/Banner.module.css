@@ -1,0 +1,30 @@
+.banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem 1rem;
+  padding: 0.7rem 1rem;
+  border: 1px solid;
+  border-radius: 0.8rem;
+}
+
+.error {
+  border-color: color-mix(in srgb, var(--color-danger) 55%, transparent);
+  background: color-mix(in srgb, var(--color-danger) 12%, var(--color-surface));
+}
+
+.info {
+  border-color: color-mix(in srgb, var(--color-info) 55%, transparent);
+  background: color-mix(in srgb, var(--color-info) 12%, var(--color-surface));
+}
+
+.message {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.4rem;
+}
