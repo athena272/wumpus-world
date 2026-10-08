@@ -1,0 +1,245 @@
+.frame {
+  container-type: inline-size;
+  width: 100%;
+  max-width: 38rem;
+  margin-inline: auto;
+}
+
+.board {
+  --gap: clamp(3px, 1cqi, 8px);
+  --cell: calc((100cqi - var(--gap) * (var(--board-size) - 1)) / var(--board-size));
+
+  display: grid;
+  grid-template-columns: repeat(var(--board-size), 1fr);
+  gap: var(--gap);
+  padding: var(--gap);
+  border-radius: 1rem;
+  background:
+    radial-gradient(circle at 30% 20%, rgb(255 255 255 / 4%), transparent 60%), var(--color-board);
+  box-shadow: inset 0 0 0 1px var(--color-border);
+}
+
+.cell {
+  position: relative;
+  aspect-ratio: 1;
+  min-width: 0;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: calc(var(--cell) * 0.12);
+  color: var(--color-text);
+  font: inherit;
+  font-size: max(0.6rem, calc(var(--cell) * 0.14));
+  cursor: pointer;
+  overflow: hidden;
+  transition:
+    background-color 0.25s ease,
+    border-color 0.15s ease,
+    transform 0.12s ease;
+}
+
+.cell:hover {
+  border-color: var(--color-text-muted);
+}
+
+.cell:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.selected {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px var(--color-accent);
+}
+
+.fog {
+  background: var(--color-fog);
+}
+
+.frontier {
+  background: color-mix(in srgb, var(--color-warning) 9%, var(--color-fog));
+}
+
+.safe {
+  background: color-mix(in srgb, var(--color-safe) 14%, var(--color-fog));
+}
+
+.danger {
+  background: color-mix(in srgb, var(--color-danger) 18%, var(--color-fog));
+}
+
+.visited {
+  background: linear-gradient(160deg, rgb(255 255 255 / 6%), transparent 70%), var(--color-floor);
+}
+
+.coords {
+  position: absolute;
+  top: 6%;
+  left: 7%;
+  font-size: 0.75em;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+}
+
+.markers {
+  position: absolute;
+  top: 5%;
+  right: 5%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.marker {
+  padding: 0 0.35em;
+  border-radius: 0.4em;
+  font-size: 0.8em;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+.marker_safe {
+  background: var(--color-safe);
+  color: #052e16;
+}
+
+.marker_pit,
+.marker_wumpus {
+  background: var(--color-danger);
+  color: #450a0a;
+}
+
+.marker_maybe_pit,
+.marker_maybe_wumpus {
+  background: color-mix(in srgb, var(--color-warning) 85%, transparent);
+  color: #422006;
+}
+
+.stage {
+  position: absolute;
+  inset: 16% 14% 20%;
+  display: grid;
+  place-items: center;
+}
+
+.stage > * {
+  grid-area: 1 / 1;
+}
+
+.revealed {
+  width: 88%;
+  height: 88%;
+  animation: reveal 0.4s ease-out both;
+}
+
+.agent {
+  position: relative;
+  z-index: 1;
+  width: 92%;
+  height: 92%;
+  filter: drop-shadow(0 4px 6px rgb(0 0 0 / 45%));
+}
+
+.flipped {
+  transform: scaleX(-1);
+}
+
+.dead {
+  filter: grayscale(1) brightness(0.7);
+  opacity: 0.75;
+}
+
+.heading {
+  position: absolute;
+  right: -8%;
+  bottom: -4%;
+  display: grid;
+  place-items: center;
+  width: 1.8em;
+  height: 1.8em;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  font-size: 0.9em;
+  font-weight: 800;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+
+.percepts {
+  position: absolute;
+  bottom: 5%;
+  left: 6%;
+  right: 6%;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  gap: 4%;
+}
+
+.perceptIcon {
+  position: relative;
+  width: 28%;
+  aspect-ratio: 1;
+}
+
+.badge {
+  position: absolute;
+  top: -35%;
+  right: -45%;
+  padding: 0 0.3em;
+  border-radius: 0.5em;
+  background: var(--color-breeze);
+  color: #082f49;
+  font-size: 0.8em;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.glitter {
+  margin-left: auto;
+  color: var(--color-accent);
+  font-size: 1.4em;
+  line-height: 1;
+  text-shadow: 0 0 8px var(--color-accent);
+  animation: twinkle 1.6s ease-in-out infinite;
+}
+
+.skeleton {
+  pointer-events: none;
+}
+
+.skeletonCell {
+  aspect-ratio: 1;
+  border-radius: 0.6rem;
+  background: var(--color-fog);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
+
+@keyframes twinkle {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .revealed,
+  .glitter,
+  .skeletonCell {
+    animation: none;
+  }
+}
