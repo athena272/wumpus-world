@@ -18,7 +18,7 @@ from wumpus.domain.types import (
     line_of_fire,
 )
 from wumpus.logic.cardinality import at_least_one, at_most_one, exactly
-from wumpus.logic.cnf import Clause
+from wumpus.logic.cnf import Clause, Literal
 from wumpus.logic.sentences import Iff, Not, Symbol, conjunction, disjunction
 
 
@@ -118,6 +118,16 @@ class WumpusKnowledgeBase:
             "¬W[i] ∨ ¬W[j], para todo par de casas i ≠ j",
             at_most_one(wumpus_names),
             description="Existe no máximo um Wumpus.",
+            origin=Origin.RULE,
+            step=0,
+        )
+        self.base.tell_clauses(
+            "¬W[i] ∨ ¬P[i], para toda casa i",
+            (
+                frozenset({Literal(wumpus(cell).name, False), Literal(pit(cell).name, False)})
+                for cell in cells
+            ),
+            description="O Wumpus nunca está numa casa com poço.",
             origin=Origin.RULE,
             step=0,
         )

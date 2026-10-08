@@ -4,9 +4,11 @@ Prioridades:
 1. Pegar o ouro quando houver brilho.
 2. Com o ouro, voltar para [1,1] por casas seguras e subir.
 3. Visitar a casa segura não visitada mais próxima.
-4. Com a flecha, atirar no Wumpus conhecido (ou numa casa sem poço que pode tê-lo).
-5. Arriscar uma casa que não é comprovadamente perigosa.
-6. Voltar para [1,1] e sair da caverna.
+4. Com a flecha, atirar no Wumpus conhecido ou, antes de arriscar, numa casa da fronteira
+   que pode tê-lo (de preferência uma sem poço).
+5. Arriscar uma casa com no máximo um perigo em aberto (poço ou Wumpus vivo).
+6. Voltar para [1,1] e sair da caverna: quando todas as casas restantes podem ter poço e
+   Wumpus ao mesmo tempo, arriscar não compensa.
 
 A cada passo o plano é recalculado do zero. Como a escolha é determinística e o custo do
 plano escolhido cai a cada ação, o agente sempre progride sem oscilar.
@@ -20,6 +22,8 @@ from wumpus.agent.inference import CellKnowledge, Inference, Truth
 from wumpus.agent.planner import Pose, destination, plan_route, plan_shot
 from wumpus.agent.symbols import pit, wumpus
 from wumpus.domain.types import START, Action, Orientation, Percept, Position
+
+MAX_RISKED_HAZARDS = 1
 
 
 @dataclass(frozen=True, slots=True)
@@ -66,6 +70,10 @@ def decide(view: AgentView, inference: Inference) -> Decision:
     if risky is not None:
         return risky
 
+    if _frontier_cells(view, inference):
+        return _go_home(
+            view, pose, safe, "Nenhuma casa é comprovadamente segura e arriscar não compensa"
+        )
     return _go_home(view, pose, safe, "Não há mais casas para explorar com segurança")
 
 
@@ -98,13 +106,24 @@ def _plan_shot(
             return Decision(plan[0], explanation, plan)
         return None
 
-    for cell in _frontier_cells(view, inference):
+    frontier = _frontier_cells(view, inference)
+    for cell in frontier:
         if cell.pit is Truth.NO and cell.wumpus is Truth.UNKNOWN:
             plan = plan_shot(pose, view.size, safe, cell.position)
             if plan:
                 explanation = (
                     f"Nenhuma casa é comprovadamente segura. KB ⊨ ¬{pit(cell.position)}, "
                     f"mas o Wumpus pode estar em {cell.position}: atirar para descobrir."
+                )
+                return Decision(plan[0], explanation, plan)
+
+    for cell in frontier:
+        if cell.wumpus is Truth.UNKNOWN:
+            plan = plan_shot(pose, view.size, safe, cell.position)
+            if plan:
+                explanation = (
+                    f"Nenhuma casa é comprovadamente segura e o Wumpus pode estar em "
+                    f"{cell.position}: atirar antes de arriscar um passo."
                 )
                 return Decision(plan[0], explanation, plan)
     return None
@@ -116,7 +135,9 @@ def _plan_risk(
     candidates = [
         cell
         for cell in _frontier_cells(view, inference)
-        if cell.pit is not Truth.YES and (cell.wumpus is not Truth.YES or inference.wumpus_dead)
+        if cell.pit is not Truth.YES
+        and (cell.wumpus is not Truth.YES or inference.wumpus_dead)
+        and _unknown_hazards(cell, inference) <= MAX_RISKED_HAZARDS
     ]
     if not candidates:
         return None

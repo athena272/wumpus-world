@@ -1,3 +1,6 @@
+import pytest
+
+from tests.agent.worlds import WUMPUS_EAST, WUMPUS_NORTH
 from wumpus.agent.inference import Truth
 from wumpus.agent.knowledge_base import Origin
 from wumpus.agent.session import GameSession
@@ -43,6 +46,45 @@ def test_scream_marks_the_wumpus_as_dead_and_its_square_safe() -> None:
     assert inference.cell(Position(1, 3)).safe
     origins = {entry.origin for entry in session.knowledge.base.entries if entry.step == 3}
     assert origins == {Origin.PERCEPT, Origin.ACTION}
+
+
+def test_located_wumpus_square_has_no_pit() -> None:
+    session = GameSession.replay(
+        GameConfig(preset=Preset.SLIDES), [F, L, L, F, Action.TURN_RIGHT, F]
+    )
+    cell = session.inference.cell(Position(1, 3))
+    assert cell.wumpus is Truth.YES
+    assert cell.pit is Truth.NO
+
+
+@pytest.mark.parametrize("mode", list(BreezeMode))
+def test_stench_and_breeze_at_the_start_leave_both_neighbors_in_doubt(mode: BreezeMode) -> None:
+    inference = GameSession(GameConfig(breeze_mode=mode), world=WUMPUS_NORTH).inference
+    for position in (Position(1, 2), Position(2, 1)):
+        assert inference.cell(position).pit is Truth.UNKNOWN
+        assert inference.cell(position).wumpus is Truth.UNKNOWN
+
+
+def test_killing_the_wumpus_frees_its_square_from_pits() -> None:
+    """Regressão: com o Wumpus provado em [1,2], ¬W[1,2] ∨ ¬P[1,2] tira o poço dali."""
+    session = GameSession(GameConfig(breeze_mode=BreezeMode.INTENSITY), world=WUMPUS_NORTH)
+    session.apply(L)
+    session.apply(Action.SHOOT)
+    cell = session.inference.cell(Position(1, 2))
+    assert session.inference.wumpus_dead
+    assert cell.pit is Truth.NO
+    assert cell.safe
+
+
+def test_pit_models_leave_room_for_the_wumpus() -> None:
+    """Regressão: com W[2,1] provado, o modelo com poço em [2,1] não vale mais."""
+    session = GameSession(GameConfig(breeze_mode=BreezeMode.INTENSITY), world=WUMPUS_EAST)
+    session.apply(L)
+    session.apply(Action.SHOOT)
+    assert session.inference.cell(Position(2, 1)).wumpus is Truth.YES
+    models = session.pit_models
+    assert models.symbols == ("P[1,2]", "P[2,1]")
+    assert models.models == ({"P[1,2]": True, "P[2,1]": False},)
 
 
 def test_missed_arrow_clears_its_line_of_fire() -> None:

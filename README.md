@@ -12,7 +12,7 @@ Implementação do Mundo de Wumpus da aula de agentes lógicos (Russell & Norvig
 
 ## Regras (PEAS)
 
-- **Ambiente:** grade N×N. O agente começa em [1,1], virado para o leste, com uma flecha. Há um Wumpus, um ouro e poços (cada casa, exceto [1,1], tem 20% de chance por padrão).
+- **Ambiente:** grade N×N. O agente começa em [1,1], virado para o leste, com uma flecha. Há um Wumpus, um ouro e poços (cada casa, exceto [1,1], tem 20% de chance por padrão). O Wumpus e o ouro nunca ficam numa casa com poço.
 - **Sensores:** `[Fedor, Brisa, Resplendor, Impacto, Grito]`.
   - Fedor nas casas vizinhas (não diagonais) ao Wumpus; Brisa nas vizinhas a um poço; Resplendor na casa do ouro.
   - Impacto ao andar contra a parede; Grito quando a flecha mata o Wumpus.
@@ -34,7 +34,7 @@ No modo de intensidade, uma casa entre dois poços mostra o selo **×2** no tabu
 
 Os símbolos seguem a notação da aula: `P[x,y]` (poço), `W[x,y]` (Wumpus), `B[x,y]` (brisa), `S[x,y]` (fedor), `G[x,y]` (resplendor) e `WumpusVivo`.
 
-1. **Conhecimento inicial:** `¬P[1,1]`, `¬W[1,1]`, "existe pelo menos um Wumpus" e "existe no máximo um Wumpus" (pares `¬W[i] ∨ ¬W[j]`).
+1. **Conhecimento inicial:** `¬P[1,1]`, `¬W[1,1]`, "existe pelo menos um Wumpus" e "existe no máximo um Wumpus" (pares `¬W[i] ∨ ¬W[j]`) e "o Wumpus nunca está numa casa com poço" (`¬W[i] ∨ ¬P[i]`). Com essa última regra, achar o Wumpus prova que a casa dele não tem poço, e matá-lo com o tiro pode liberar a casa.
 2. **Primeira visita a uma casa** (cada regra entra uma vez só):
    - `¬P[x,y]` e `¬W[x,y]`, porque o agente está vivo ali;
    - `B[x,y] ⇔ (...)` e `S[x,y] ⇔ (...)` para as vizinhas;
@@ -53,7 +53,7 @@ Cada sentença é convertida para FNC (forma normal conjuntiva). O painel mostra
   - **OK** quando a KB prova que a casa é segura;
   - **P!** e **W!** quando prova o perigo;
   - **P?** e **W?** quando ainda há dúvida (só na fronteira).
-- **Verificação de modelos (TT-Entails):** o painel "Modelos dos poços" enumera as atribuições dos poços da fronteira, como na tabela dos slides. Acima de 10 símbolos a enumeração é pulada (2¹⁰ linhas); a inferência continua pelo DPLL.
+- **Verificação de modelos (TT-Entails):** o painel "Modelos dos poços" enumera as atribuições dos poços da fronteira, como na tabela dos slides. Modelos que poriam poço em todas as casas onde o Wumpus ainda pode estar são descartados. Acima de 10 símbolos a enumeração é pulada (2¹⁰ linhas); a inferência continua pelo DPLL.
 
 ### Agente híbrido
 
@@ -62,9 +62,9 @@ O agente segue o agente híbrido do AIMA (fig. 7.20), com planejamento por busca
 1. pegar o ouro se houver resplendor;
 2. com o ouro, voltar a [1,1] por casas seguras e sair;
 3. ir à casa segura não visitada mais próxima;
-4. atirar se souber onde está o Wumpus;
-5. arriscar a casa da fronteira com menos perigos desconhecidos;
-6. se nada mais fizer sentido, voltar e sair.
+4. com a flecha, atirar no Wumpus conhecido ou, antes de arriscar um passo, numa casa da fronteira que pode tê-lo;
+5. arriscar a casa da fronteira com menos perigos desconhecidos, desde que tenha no máximo um (poço ou Wumpus vivo);
+6. se nada mais fizer sentido, voltar e sair: quando todas as casas restantes podem ter poço e Wumpus ao mesmo tempo, arriscar não compensa.
 
 Cada decisão vem com a justificativa, por exemplo `Indo para [1,2], que é segura: KB ⊨ ¬P[1,2] ∧ ¬W[1,2].`
 
