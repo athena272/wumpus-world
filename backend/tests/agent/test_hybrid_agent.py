@@ -2,17 +2,28 @@ import time
 
 import pytest
 
-from wumpus.agent.inference import Truth
+from tests.agent.worlds import WUMPUS_EAST, WUMPUS_NORTH
+from wumpus.agent.hybrid_agent import AgentView, decide
+from wumpus.agent.inference import CellKnowledge, Inference, Truth
 from wumpus.agent.session import GameSession
 from wumpus.domain.errors import GameOverError
-from wumpus.domain.types import Action, BreezeMode, GameStatus
-from wumpus.domain.world import GameConfig, Preset
+from wumpus.domain.types import (
+    START,
+    Action,
+    BreezeMode,
+    GameStatus,
+    Orientation,
+    Percept,
+    Position,
+    all_positions,
+)
+from wumpus.domain.world import GameConfig, Preset, World
 
 MAX_STEPS = 400
 
 
-def autoplay(config: GameConfig) -> GameSession:
-    session = GameSession(config)
+def autoplay(config: GameConfig, world: World | None = None) -> GameSession:
+    session = GameSession(config, world=world)
     for _ in range(MAX_STEPS):
         if session.state.is_over:
             return session
@@ -61,6 +72,72 @@ def test_agent_grabs_gold_when_it_glitters() -> None:
     ]
     session = GameSession.replay(GameConfig(preset=Preset.SLIDES), to_gold)
     assert session.decide().action is Action.GRAB
+
+
+@pytest.mark.parametrize("mode", list(BreezeMode))
+def test_agent_shoots_before_risking_a_step(mode: BreezeMode) -> None:
+    """Regressão: sem casa segura, o agente arriscava um passo com 50% de chance de morrer."""
+    decision = GameSession(GameConfig(breeze_mode=mode), world=WUMPUS_NORTH).decide()
+    assert decision.plan == (Action.TURN_LEFT, Action.SHOOT)
+    assert "atirar" in decision.explanation
+
+
+@pytest.mark.parametrize("mode", list(BreezeMode))
+def test_agent_wins_when_the_shot_kills_the_wumpus_next_to_the_start(mode: BreezeMode) -> None:
+    session = autoplay(GameConfig(breeze_mode=mode), world=WUMPUS_NORTH)
+    assert session.state.status is GameStatus.WON
+
+
+@pytest.mark.parametrize("mode", list(BreezeMode))
+def test_agent_climbs_out_when_the_missed_shot_proves_both_neighbors_deadly(
+    mode: BreezeMode,
+) -> None:
+    session = autoplay(GameConfig(breeze_mode=mode), world=WUMPUS_EAST)
+    assert session.actions == [Action.TURN_LEFT, Action.SHOOT, Action.CLIMB]
+    assert session.state.status is GameStatus.ESCAPED
+
+
+def frontier_inference(frontier: dict[Position, tuple[Truth, Truth]]) -> Inference:
+    """Only [1,1] visited; ``frontier`` maps a square to what the KB says of its pit and Wumpus."""
+    cells = {
+        position: CellKnowledge(
+            position=position,
+            visited=position == START,
+            pit=Truth.NO if position == START else frontier.get(position, unknown)[0],
+            wumpus=Truth.NO if position == START else frontier.get(position, unknown)[1],
+            safe=position == START,
+        )
+        for position in all_positions(4)
+        for unknown in [(Truth.UNKNOWN, Truth.UNKNOWN)]
+    }
+    return Inference(cells=cells, queries=(), wumpus_dead=False)
+
+
+START_VIEW = AgentView(
+    position=START,
+    orientation=Orientation.EAST,
+    has_gold=False,
+    has_arrow=False,
+    percept=Percept(stench=True, breeze=1),
+    size=4,
+)
+
+
+def test_agent_does_not_risk_a_square_that_may_hide_a_pit_and_the_live_wumpus() -> None:
+    unknown = (Truth.UNKNOWN, Truth.UNKNOWN)
+    inference = frontier_inference({Position(1, 2): unknown, Position(2, 1): unknown})
+    decision = decide(START_VIEW, inference)
+    assert decision.action is Action.CLIMB
+    assert "não compensa" in decision.explanation
+
+
+def test_agent_still_risks_a_square_with_a_single_unknown_danger() -> None:
+    inference = frontier_inference(
+        {Position(1, 2): (Truth.UNKNOWN, Truth.UNKNOWN), Position(2, 1): (Truth.UNKNOWN, Truth.NO)}
+    )
+    decision = decide(START_VIEW, inference)
+    assert decision.plan == (Action.FORWARD,)
+    assert "Arriscando [2,1]" in decision.explanation
 
 
 def test_deciding_after_the_end_is_an_error() -> None:
