@@ -33,13 +33,10 @@ describe('App', () => {
 
     const setup = screen.getByRole('region', { name: 'Monte sua caverna' });
     expect(api.stateCalls).toHaveLength(0);
-    expect(within(setup).getByLabelText('Mapa dos slides')).toBeChecked();
     expect(within(setup).queryByRole('button', { name: 'Cancelar' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Novo jogo' })).not.toBeInTheDocument();
 
-    await user.click(within(setup).getByLabelText('Aleatório'));
     await user.selectOptions(within(setup).getByLabelText('Tamanho'), '8');
-    await user.click(within(setup).getByLabelText(/Brisa com intensidade/));
     await user.type(within(setup).getByLabelText(/Código do mapa/), '5');
     await user.click(within(setup).getByRole('button', { name: 'Começar' }));
 
@@ -47,6 +44,41 @@ describe('App', () => {
       config: { size: 8, seed: 5, pitProbability: 0.2, breezeMode: 'intensity', preset: 'random' },
       actions: [],
     });
+  });
+
+  it('preselects a random cave with the counting breeze and draws a new code for it', async () => {
+    const api = new FakeGameApi();
+    const user = userEvent.setup();
+    renderWithApi(<App />, api);
+
+    const setup = screen.getByRole('region', { name: 'Monte sua caverna' });
+    expect(within(setup).getByLabelText('Aleatório')).toBeChecked();
+    expect(within(setup).getByLabelText('Brisa com intensidade')).toBeChecked();
+    expect(within(setup).getByLabelText(/Código do mapa/)).toHaveValue('');
+
+    await user.click(within(setup).getByRole('button', { name: 'Começar' }));
+
+    expect(api.lastState().request).toEqual({
+      config: {
+        size: 4,
+        seed: expect.any(Number) as number,
+        pitProbability: 0.2,
+        breezeMode: 'intensity',
+        preset: 'random',
+      },
+      actions: [],
+    });
+  });
+
+  it('credits the course and the developer at the bottom of the page', () => {
+    renderWithApi(<App />, new FakeGameApi());
+
+    expect(screen.getByText(/capítulo 7 do AIMA/)).toBeInTheDocument();
+    const footer = screen.getByRole('contentinfo');
+    expect(
+      within(footer).getByRole('navigation', { name: 'Contato do desenvolvedor' }),
+    ).toBeInTheDocument();
+    expect(within(footer).getByText(/Todos os direitos reservados/)).toBeInTheDocument();
   });
 
   it('shows a loading state until the first world arrives', async () => {
