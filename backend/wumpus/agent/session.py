@@ -62,7 +62,7 @@ class GameSession:
     @property
     def pit_models(self) -> PitModels:
         if self._pit_models is None:
-            self._pit_models = pit_models(self.knowledge)
+            self._pit_models = pit_models(self.knowledge, self.inference.possible_wumpus_cells())
         return self._pit_models
 
     def agent_view(self) -> AgentView:

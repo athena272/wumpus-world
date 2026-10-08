@@ -66,6 +66,12 @@ class Inference:
     def safe_cells(self) -> frozenset[Position]:
         return frozenset(position for position, cell in self.cells.items() if cell.safe)
 
+    def possible_wumpus_cells(self) -> frozenset[Position]:
+        """Casas onde a KB não descarta o Wumpus (``KB ⊭ ¬W``)."""
+        return frozenset(
+            position for position, cell in self.cells.items() if cell.wumpus is not Truth.NO
+        )
+
 
 @dataclass(frozen=True, slots=True)
 class PitModels:
@@ -150,7 +156,13 @@ def _frontier_queries(
     return tuple(queries)
 
 
-def pit_models(knowledge: WumpusKnowledgeBase) -> PitModels:
+def pit_models(knowledge: WumpusKnowledgeBase, possible_wumpus: frozenset[Position]) -> PitModels:
+    """Modelos dos poços da fronteira.
+
+    A enumeração só olha as cláusulas de poços e brisas. A regra ``¬W[i] ∨ ¬P[i]`` liga
+    poços ao Wumpus, então um modelo só vale se deixar sem poço alguma casa onde o Wumpus
+    ainda pode estar (``possible_wumpus``).
+    """
     frontier = knowledge.frontier()
     symbols = tuple(pit(position).name for position in frontier)
     total = 2 ** len(symbols)
@@ -161,7 +173,11 @@ def pit_models(knowledge: WumpusKnowledgeBase) -> PitModels:
     for position, percept in knowledge.percepts.items():
         fixed[pit(position).name] = False
         fixed[breeze(position).name] = percept.has_breeze
-    models = enumerate_models(knowledge.clauses, symbols, fixed)
+    models = [
+        model
+        for model in enumerate_models(knowledge.clauses, symbols, fixed)
+        if _leaves_room_for_wumpus(model, frontier, possible_wumpus)
+    ]
     return PitModels(
         symbols=symbols,
         total_assignments=total,
@@ -169,4 +185,12 @@ def pit_models(knowledge: WumpusKnowledgeBase) -> PitModels:
         models=tuple(models[:MAX_LISTED_MODELS]),
         truncated=len(models) > MAX_LISTED_MODELS,
         skipped=False,
+    )
+
+
+def _leaves_room_for_wumpus(
+    model: dict[str, bool], frontier: tuple[Position, ...], possible_wumpus: frozenset[Position]
+) -> bool:
+    return any(
+        position not in frontier or not model[pit(position).name] for position in possible_wumpus
     )
