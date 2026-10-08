@@ -56,3 +56,8 @@ def test_invalid_configs_are_rejected(kwargs: dict[str, object]) -> None:
 def test_start_square_must_be_safe() -> None:
     with pytest.raises(ValueError, match="safe"):
         World(size=4, wumpus=START, gold=Position(2, 2), pits=frozenset())
+
+
+def test_wumpus_cannot_share_a_square_with_a_pit() -> None:
+    with pytest.raises(ValueError, match="pit"):
+        World(size=4, wumpus=Position(2, 2), gold=Position(3, 3), pits=frozenset({Position(2, 2)}))

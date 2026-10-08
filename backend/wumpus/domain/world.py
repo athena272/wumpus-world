@@ -49,6 +49,9 @@ class World:
             raise ValueError("Every element of the world must be inside the board")
         if START in self.pits or self.wumpus == START:
             raise ValueError("The starting square must be safe")
+        # The agent's KB assumes this (¬W[i] ∨ ¬P[i]); breaking it would make inference unsound.
+        if self.wumpus in self.pits:
+            raise ValueError("The Wumpus cannot share a square with a pit")
 
     def has_pit(self, position: Position) -> bool:
         return position in self.pits
