@@ -1,0 +1,89 @@
+/* z-index: above the board and the sticky KB header (1–2), below the dialog backdrop (50). */
+.footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  padding: 0.4rem 1rem;
+  border-top: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-bg) 85%, transparent);
+  backdrop-filter: blur(8px);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.link {
+  display: inline-flex;
+  border-radius: 0.5rem;
+  transition:
+    transform 160ms ease,
+    opacity 160ms ease;
+}
+
+.link:hover {
+  transform: translateY(-2px);
+  opacity: 0.85;
+}
+
+.link:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+.text p {
+  margin: 0;
+  line-height: 1.4;
+}
+
+.credit {
+  font-size: 0.85rem;
+}
+
+/* nowrap: on narrow screens the line breaks at the separator, not inside the name or role. */
+.name {
+  font-weight: 700;
+  color: var(--color-accent);
+  white-space: nowrap;
+}
+
+.role {
+  font-weight: 600;
+  color: var(--color-text-soft);
+  white-space: nowrap;
+}
+
+.rights {
+  font-size: 0.75rem;
+}
+
+@media (min-width: 40rem) {
+  .footer {
+    flex-direction: row;
+    gap: 1rem;
+    padding-block: 0.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link {
+    transition: none;
+  }
+
+  .link:hover {
+    transform: none;
+  }
+}
