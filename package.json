@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "description": "Mundo de Wumpus com agente lógico e base de conhecimento visível (React + FastAPI).",
   "author": "Guilherme Rosário Alves",
+  "license": "SEE LICENSE IN LICENSE",
   "packageManager": "pnpm@12.8.1",
   "engines": {
     "node": ">=24"
