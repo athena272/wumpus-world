@@ -55,6 +55,7 @@ describe('App', () => {
     expect(within(setup).getByLabelText('Aleatório')).toBeChecked();
     expect(within(setup).getByLabelText('Brisa com intensidade')).toBeChecked();
     expect(within(setup).getByLabelText(/Código do mapa/)).toHaveValue('');
+    expect(within(setup).getByText(/volte para \[1,1\] e use Sair/)).toBeInTheDocument();
 
     await user.click(within(setup).getByRole('button', { name: 'Começar' }));
 

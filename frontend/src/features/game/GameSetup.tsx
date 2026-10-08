@@ -1,6 +1,7 @@
 import type { GameConfig } from '../../api/types';
 import { Panel } from '../../components/Panel/Panel';
 import { Sprite } from '../../components/Sprite/Sprite';
+import { GameGoal } from './GameGoal';
 import { GameSetupForm } from './GameSetupForm';
 
 interface GameSetupProps {
@@ -19,6 +20,7 @@ export function GameSetup({ initial, onSubmit, className }: GameSetupProps) {
       tone="gold"
       className={className}
     >
+      <GameGoal />
       <GameSetupForm initial={initial} onSubmit={onSubmit} />
     </Panel>
   );
