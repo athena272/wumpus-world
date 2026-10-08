@@ -1,6 +1,7 @@
 import '@fontsource-variable/fredoka';
 import '@fontsource-variable/jetbrains-mono';
 import '@fontsource-variable/nunito';
+import { Analytics } from '@vercel/analytics/react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './App';
@@ -24,5 +25,6 @@ createRoot(rootElement).render(
     <GameApiProvider api={api}>
       <App />
     </GameApiProvider>
+    <Analytics />
   </StrictMode>,
 );
