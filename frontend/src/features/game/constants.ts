@@ -35,13 +35,16 @@ export function randomSeed(): number {
   return Math.floor(Math.random() * MAX_SEED);
 }
 
-/** Choices preselected in the setup form: the map of the slides, familiar from class. */
+/**
+ * Choices preselected in the setup form: a fresh random cave with the counting breeze.
+ * The seed is not prefilled, so each default game draws a new one.
+ */
 export function createDefaultGameConfig(): GameConfig {
   return {
-    size: SLIDES_BOARD_SIZE,
+    size: MIN_BOARD_SIZE,
     seed: 0,
     pitProbability: 0.2,
-    breezeMode: 'classic',
-    preset: 'slides',
+    breezeMode: 'intensity',
+    preset: 'random',
   };
 }

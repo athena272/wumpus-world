@@ -165,6 +165,7 @@ São dois projetos na Vercel apontando para o mesmo repositório, um para cada p
 2. **Root Directory:** `frontend`. O preset Vite e o pnpm são detectados pelo `pnpm-lock.yaml` da raiz. Mantenha ligada a opção que inclui arquivos fora do Root Directory, porque o lockfile fica na raiz. O Node 24 vem do `engines` do `package.json`.
 3. Em **Environment Variables**, crie `VITE_API_URL` com a URL do backend, sem barra no final (por exemplo `https://wumpus-world-api.vercel.app`).
 4. Faça o deploy. Se alterou a URL do frontend, atualize `ALLOWED_ORIGINS` no backend e faça um _redeploy_.
+5. Opcional: em **Analytics**, ative o **Web Analytics** e faça um novo deploy. O componente `<Analytics />` do `@vercel/analytics` já está em `src/main.tsx`; em desenvolvimento ele só registra as visitas no console, sem enviar nada. O rewrite do `vercel.json` deixa de fora `/_vercel/`, onde fica o script de coleta.
 
 Funções Python no plano gratuito têm _cold start_ de 1 a 2 s. Por isso, quando a resposta demora mais de 2 s, a interface mostra "Acordando o servidor...".
 
@@ -189,3 +190,7 @@ Os arquivos `.env.example` em cada pasta documentam as variáveis.
   - integração do `App`.
 
 Atalhos de teclado: `A`/`←` gira à esquerda, `D`/`→` gira à direita, `W`/`↑` avança, `G` pega, `F` atira, `C` sai.
+
+## Licença
+
+Software proprietário, com todos os direitos reservados. Uso, cópia, modificação, distribuição ou exploração comercial dependem de autorização por escrito do titular. Os termos completos estão em [LICENSE](LICENSE).
