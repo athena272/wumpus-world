@@ -1,0 +1,155 @@
+.status {
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: var(--color-surface-raised);
+}
+
+.playing {
+  color: var(--color-info);
+  background: color-mix(in srgb, var(--color-info) 14%, var(--color-surface-raised));
+}
+
+.won {
+  background: var(--color-safe);
+  color: #052e16;
+}
+
+.escaped {
+  background: var(--color-warning);
+  color: #422006;
+}
+
+.dead {
+  background: var(--color-danger);
+  color: #450a0a;
+}
+
+.vector {
+  margin: 0;
+  padding: 0.6rem 0.85rem;
+  border-radius: 0.8rem;
+  background: var(--color-surface-raised);
+  font-family: var(--font-mono);
+  font-size: 0.92rem;
+  color: var(--color-text-muted);
+}
+
+.nothing {
+  color: var(--color-text-muted);
+  opacity: 0.75;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.75rem 0.3rem 0.45rem;
+  border: 1px dashed var(--color-border);
+  border-radius: 999px;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.chip:not(.active) .chipIcon {
+  filter: grayscale(1);
+  opacity: 0.45;
+}
+
+.chipIcon {
+  display: grid;
+  place-items: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.active {
+  border-style: solid;
+  font-weight: 800;
+}
+
+.vector .stench,
+.vector .breeze,
+.vector .glitter,
+.vector .bump,
+.vector .scream {
+  font-weight: 700;
+  background: none;
+}
+
+.stench {
+  border-color: var(--color-stench);
+  background: color-mix(in srgb, var(--color-stench) 16%, transparent);
+  color: var(--color-stench);
+}
+
+.breeze {
+  border-color: var(--color-breeze);
+  background: color-mix(in srgb, var(--color-breeze) 16%, transparent);
+  color: var(--color-breeze);
+}
+
+.glitter {
+  border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 16%, transparent);
+  color: var(--color-accent);
+}
+
+.bump {
+  border-color: var(--color-text-soft);
+  background: color-mix(in srgb, var(--color-text-soft) 12%, transparent);
+  color: var(--color-text);
+}
+
+.scream {
+  border-color: var(--color-danger);
+  background: color-mix(in srgb, var(--color-danger) 16%, transparent);
+  color: var(--color-danger);
+}
+
+.hint {
+  margin: 0;
+  color: var(--color-breeze);
+  font-size: 0.92rem;
+}
+
+.events {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin: 0;
+  padding: 0.65rem 0.9rem;
+  border-left: 4px solid var(--event-tone);
+  border-radius: 0.6rem;
+  background: color-mix(in srgb, var(--event-tone) 12%, var(--color-surface-raised));
+  list-style: none;
+  font-size: 0.97rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.neutral {
+  --event-tone: var(--color-info);
+}
+
+.good {
+  --event-tone: var(--color-safe);
+}
+
+.fatal {
+  --event-tone: var(--color-danger);
+}
