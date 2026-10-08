@@ -34,6 +34,12 @@ export const ACTION_LABELS: Record<Action, string> = {
   climb: 'Sair',
 };
 
+export const WIN_GOAL = 'Pegue o ouro, volte para [1,1] e use Sair.';
+
+/** Mirrors the scores in `backend/wumpus/domain/game.py`. */
+export const SCORING_RULES =
+  '+1000 ao sair com o ouro, −1 por ação, −10 pela flecha e −1000 se morrer.';
+
 export const ORIENTATION_LABELS: Record<Orientation, string> = {
   north: 'norte',
   east: 'leste',
